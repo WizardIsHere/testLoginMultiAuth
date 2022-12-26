@@ -33,21 +33,43 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-        //  dd($request);
+
         
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'registration' => ['required', 'string', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'mname' => ['string', 'max:255'],
+            'lname' => ['string', 'max:255'],
+            'department' => ['required', 'string', 'max:255'],
+            'phone' => ['required','string','max:255'],
+            'semester' => ['required', 'integer', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
+            'avatar' => ['required','mimes:jpeg,png'],
         ]);
+
+  
+        if(request()->hasfile('avatar')){
+            $avatarName = time().'.'.request()->avatar->getClientOriginalExtension();
+            request()->avatar->move(public_path('avatars'), $avatarName);
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'registration' => $request->registration,
             'password' => Hash::make($request->password),
+            'mname' => $request->mname,
+            'lname' => $request -> lname,   
+            'phone' => $request->phone,
+            'department' => $request -> department,
+            'semester' => $request -> semester,
+            'address' => $request -> address,
+            'avatar' => $avatarName ?? NULL,
         ]);
+
+        // dd($request->all());
 
         event(new Registered($user));
 
