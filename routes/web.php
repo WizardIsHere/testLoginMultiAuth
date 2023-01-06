@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +20,11 @@ use App\Http\Controllers\AdminController
 
 Route::prefix('admin')->group(function () {
 
-    Route::get('/login',[AdminController::class,'Index'])->name('admin_login');
-    Route::get('/login/owner',[AdminController::class,'Login'])->name('admin_login_form');
-    Route::get('/dashboard',[AdminController::class,'Dashboard'])->name('admin_dashboard');
+    Route::get('/login',[AdminController::class,'Index'])->name('admin_login_form');
+    Route::post('/login',[AdminController::class,'Login'])->name('admin.login');
+    Route::get('/dashboard',[AdminController::class,'Dashboard'])->name('admin_dashboard')->middleware('admin');
+    Route::get('/logout',[AdminController::class,'AdminLogout'])->name('admin.logout')->middleware('admin');
+    Route::get('/users',[AdminUserController::class,'Index'])->name('users');
 });
 
 // Admin Route Ends
